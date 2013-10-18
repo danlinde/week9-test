@@ -150,14 +150,12 @@ end
 # {1 => 1, 2 => 2} becomes 6
 def add_together_keys_and_values(hash)
 	hash.to_a.flatten.inject(&:+)
-
 end
 
 # take out all the capital letters from a string
 # so 'Hello JohnDoe' becomes 'ello ohnoe'
 def remove_capital_letters_from_string(string)
 	string.gsub(/[^[:lower:] ]+/, "")
-
 end
 
 # round up a float up and convert it to an Integer,
@@ -200,7 +198,6 @@ end
 # a-z (uppercase and lower) or numbers
 def check_a_string_for_special_characters(string)
 	string =~ /[^A-Za-z0-9_]/
-
 end
 
 # get the upper limit of a range. e.g. for the range 1..20, you
