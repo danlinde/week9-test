@@ -15,7 +15,6 @@ end
 
 # remove instances of nil AND false from an array
 def remove_nils_and_false_from_array(array)
-	array.delete_if {|elem| elem == nil}
 	array.keep_if {|elem| elem}
 end
 
@@ -47,7 +46,7 @@ end
 # sort an array of words by their last letter, e.g.
 # ['sky', 'puma', 'maker'] becomes ['puma', 'maker', 'sky']
 def array_sort_by_last_letter_of_word(array)
-	array.sort_by {|elem| elem[-1,1]}
+	array.sort_by {|elem| elem[-1]}
 end
 
 # cut strings in half, and return the first half, e.g.
@@ -68,10 +67,7 @@ end
 # even numbers come first
 # so [1, 2, 3, 4, 5, 6] becomes [[2, 4, 6], [1, 3, 5]]
 def separate_array_into_even_and_odd_numbers(array)
-	separate =[]
-	even = array.select {|elem| elem.even?}
-	odd = array.select {|elem| elem.odd?}
-	separate << even << odd
+	array.partition { |elem| elem.even? }
 end
 
 # count the numbers of elements in an element which are palindromes
@@ -84,12 +80,12 @@ end
 
 # return the shortest word in an array
 def shortest_word_in_array(array)
-	array.min {|a, b| a.length <=> b.length}
+	array.min_by(&:length)
 end
 
 # return the shortest word in an array
 def longest_word_in_array(array)
-	array.max {|a, b| a.length <=> b.length}
+	array.max_by(&:length)
 end
 
 # add up all the numbers in an array, so [1, 3, 5, 6]
@@ -120,7 +116,7 @@ end
 # [1, 3, 5, 4, 1, 2, 6, 2, 1, 3, 7]
 # becomes [1, 3, 5, 4, 1, 2]
 def get_elements_until_greater_than_five(array)
-	array.first(6)
+	array.take_while { |elem| elem < 6 }
 end
 
 # turn an array (with an even number of elements) into a hash, by
@@ -149,7 +145,7 @@ end
 # add all the keys and all the values together, e.g.
 # {1 => 1, 2 => 2} becomes 6
 def add_together_keys_and_values(hash)
-	hash.to_a.flatten.inject(&:+)
+	hash.flatten.inject(&:+)
 end
 
 # take out all the capital letters from a string
@@ -179,7 +175,7 @@ end
 # get the domain name *without* the .com part, from an email address
 # so alex@makersacademy.com becomes makersacademy
 def get_domain_name_from_email_address(email)
-	email.split("@").last.split(".").first
+	email[/@(\w+)/, 1]
 end
 
 # capitalize the first letter in each word of a string, 
@@ -197,7 +193,7 @@ end
 # where 'special character' means anything apart from the letters
 # a-z (uppercase and lower) or numbers
 def check_a_string_for_special_characters(string)
-	string =~ /[^A-Za-z0-9_]/
+	string =~ /(\W)/
 end
 
 # get the upper limit of a range. e.g. for the range 1..20, you
@@ -209,7 +205,7 @@ end
 # should return true for a 3 dot range like 1...20, false for a 
 # normal 2 dot range
 def is_a_3_dot_range?(range)
-	range.to_s =~ /\.{3}/
+	range.exclude_end?
 end
 
 # get the square root of a number
@@ -229,7 +225,7 @@ end
 # called call_method_from_string('foobar')
 # the method foobar should be invoked
 def call_method_from_string(str_method)
-	self.send(str_method)
+	send(str_method)
 end
 
 # return true if the date is a uk bank holiday for 2014
@@ -258,20 +254,9 @@ end
 # and 1 that is 4 letters long. Return it as a hash in the format
 # word_length => count, e.g. {2 => 1, 3 => 5, 4 => 1}
 def count_words_of_each_length_in_a_file(file_path)
-	h = Hash.new
-	f = File.read(file_path)
-	f.gsub!(/[^a-zA-Z ]/, "")
-	f.lines do |line| 
-		words = line.split
-		words.each do |w|
-			if h.has_key?(w.length)
-				h[w.length] = h[w.length] + 1
-			else
-				h[w.length] = 1
-			end
-		end
-	end
-	h.sort{|a,b| a[1]<=>b[1]}
+	words, count = IO.read(file_path).scan(/\w+/), Hash.new(0)
+	words.each { |word| count[word.size] += 1}
+	return count
 end
 
 # implement fizzbuzz without modulo, i.e. the % method
